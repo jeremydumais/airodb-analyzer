@@ -2,24 +2,32 @@ import operator
 from pymongo import MongoClient
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from services.dbStorage import DBStorage
+import qdarkgraystyle
 
 class Ui_OpenSessionForm(QtWidgets.QDialog):
     def __init__(self):
         super(Ui_OpenSessionForm, self).__init__()
         uic.loadUi('airodb_analyzer/designer/openSessionForm.ui', self)
-    
+        self.setStyleSheet(qdarkgraystyle.load_stylesheet())
+        #Icons
+        self.buttonOK.setIcon(QtWidgets.QApplication.style().standardIcon(QtWidgets.QStyle.SP_DialogOkButton))
+        self.buttonCancel.setIcon(QtWidgets.QApplication.style().standardIcon(QtWidgets.QStyle.SP_DialogCancelButton))
         #Signals
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).clicked.connect(self.test)
+        self.buttonOK.clicked.connect(self.buttonOKClick)
+        self.buttonCancel.clicked.connect(self.buttonCancelClick)
 
     def showEvent(self, event):
         self.loadSessions()
-
-    def closeEvent(self, evnt):
-        evnt.ignore()
     
-    def test(self):
-        self.setWindowTitle("test")
-        self.accepted = False
+    def buttonOKClick(self):
+        index = self.tableView.selectionModel().selectedRows()
+        if (len(index) > 0):
+            row = index[0].row()
+            self.selectedSession = self.tabledata[row][0]
+            self.accept()
+
+    def buttonCancelClick(self):
+        self.reject()
 
     def loadSessions(self):
         storage = DBStorage()

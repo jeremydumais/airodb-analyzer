@@ -4,7 +4,7 @@ from ui.mainForm import Ui_MainWindow
 if __name__ == '__main__':
     import sys
     import os
-    import qdarkstyle
+    import qdarkgraystyle
 
     # set the environment variable to use a specific wrapper
     # it can be set to pyqt, pyqt5, pyside or pyside2 (not implemented yet)
@@ -14,5 +14,5 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     mainForm = Ui_MainWindow()
     # setup stylesheet
-    app.setStyleSheet(qdarkstyle.load_stylesheet_from_environment())
+    app.setStyleSheet(qdarkgraystyle.load_stylesheet())
     sys.exit(app.exec_())
