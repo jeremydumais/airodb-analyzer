@@ -26,4 +26,4 @@ class DBStorage():
         return self.dumps.aggregate([{"$match":{}}, {"$group": { "_id":"$SessionName", "first": { "$first": "$FirstTimeSeen"}, "last": { "$last": "$LastTimeSeen"}, "count": { "$sum": 1}}}])
 
     def getSessionAP(self, sessionName):
-      return self.dumps
+      return self.dumps.aggregate([{"$match":{}}, {"$group": { "_id":"$BSSID", "name": { "$last": "$ESSID" }}}])
