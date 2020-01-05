@@ -26,4 +26,17 @@ class DBStorage():
         return self.dumps.aggregate([{"$match":{}}, {"$group": { "_id":"$SessionName", "first": { "$first": "$FirstTimeSeen"}, "last": { "$last": "$LastTimeSeen"}, "count": { "$sum": 1}}}])
 
     def getSessionAP(self, sessionName):
-      return self.dumps.aggregate([{"$match":{}}, {"$group": { "_id":"$BSSID", "name": { "$last": "$ESSID" }}}])
+      return self.dumps.aggregate([{"$match":{"SessionName":sessionName}}, {"$group": { "_id":"$BSSID", "name": { "$last": "$ESSID" }}}])
+
+    def getSessionAPStats(self, sessionName, apMACAddress):
+      return self.dumps.aggregate([{"$match":{"SessionName":sessionName, "BSSID":apMACAddress}}, {
+        "$group": { "_id":"$BSSID", 
+        "name": { "$last": "$ESSID" }, 
+        "FirstTimeSeen": { "$first": "$FirstTimeSeen"}, 
+        "LastTimeSeen": { "$last": "$LastTimeSeen"},
+        "Encryption": { "$last": "$Privacy"},
+        "Cipher": { "$last": "$Cipher"},
+        "Authentification": { "$last": "$Authentification"},
+        "Channel": { "$last": "$Channel"},
+        "Speed": { "$last": "$Speed"}
+        }}])
