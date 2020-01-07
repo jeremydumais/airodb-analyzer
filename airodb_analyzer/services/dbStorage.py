@@ -40,3 +40,6 @@ class DBStorage():
         "Channel": { "$last": "$Channel"},
         "Speed": { "$last": "$Speed"}
         }}])
+
+    def getSessionAPRawLogs(self, sessionName, apMACAddress):
+      return self.dumps.find({"SessionName":sessionName, "BSSID":apMACAddress})

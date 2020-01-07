@@ -1,20 +1,26 @@
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from ui.openSessionForm import Ui_OpenSessionForm
+from ui.aboutBoxForm import Ui_AboutBoxForm
 from services.dbStorage import DBStorage
+from bson.json_util import dumps
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
         uic.loadUi('airodb_analyzer/designer/mainForm.ui', self)
+        screenCenter = QtWidgets.QApplication.desktop().screen().rect().center()
+        self.move(screenCenter.x()-self.width()/2, screenCenter.y()-self.height()/2);
         self.tabWidgetAPDetails.setVisible(False)
         self._sessionName = ""
         self.apListModel = QtGui.QStandardItemModel(self.listViewAP)
         self.apListMACAddress = []
         self.listViewAP.setModel(self.apListModel)
         #Signals
+        self.tabWidgetAPDetails.currentChanged.connect(self.APDetailsTabChanged)
         self.action_Quit.triggered.connect(self.menuQuitClick)
         self.action_Open_session.triggered.connect(self.menuOpenSessionClick)
         self.action_Open_session_toolbar.triggered.connect(self.menuOpenSessionClick)
+        self.actionAbout_airodb_analyzer.triggered.connect(self.menuAboutBoxClick)
         self.listViewAP.selectionModel().selectionChanged.connect(self.listViewAPCurrentChange)
 
         self.show()
@@ -25,6 +31,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def menuQuitClick(self):
         self.close()
+
+    def menuAboutBoxClick(self):
+        formAboutBox = Ui_AboutBoxForm()
+        formAboutBox.exec_()
 
     def loadSession(self, sessionName):
         storage = DBStorage()
@@ -38,17 +48,37 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             self.apListMACAddress.append(ap["_id"])
         self.tabWidgetAPDetails.setVisible(False)
         
+    def loadAPRawLogs(self, sessionName, apMACAddress):
+        storage = DBStorage()
+        logs = storage.getSessionAPRawLogs(sessionName, apMACAddress)
+        rawLogs = ""
+        for log in logs:
+            rawLogs = rawLogs + dumps(log) + "\n"
+        self.labelRawLogs.setText(rawLogs)
+
+    def getSelectedAPMACAddress(self):
+            selectedRows = self.listViewAP.selectionModel().selectedRows()
+            if (len(selectedRows) > 0):
+                row = selectedRows[0].row()
+                return self.apListMACAddress[row]
+            else:
+                return None
+
     def menuOpenSessionClick(self):
         formOpenSession = Ui_OpenSessionForm()
         result = formOpenSession.exec_()
         if (result == QtWidgets.QDialog.Accepted):
             self.loadSession(formOpenSession.selectedSession)
 
+    def APDetailsTabChanged(self):
+        if (self.tabWidgetAPDetails.currentIndex() == 1):
+            apMACAddress = self.getSelectedAPMACAddress()
+            if (apMACAddress != None):
+                self.loadAPRawLogs(self._sessionName, apMACAddress)
+
     def listViewAPCurrentChange(self):
-        selectedRows = self.listViewAP.selectionModel().selectedRows()
-        if (len(selectedRows) > 0):
-            row = selectedRows[0].row()
-            apMACAddress = self.apListMACAddress[row]
+        apMACAddress = self.getSelectedAPMACAddress()
+        if (apMACAddress != None):
             storage = DBStorage()
             apStats = storage.getSessionAPStats(self._sessionName, apMACAddress)
             record = apStats.next()
@@ -64,4 +94,5 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             self.labelAuthentification.setText(record["Authentification"])
             self.labelChannel.setText(str(record["Channel"]))
             self.labelSpeed.setText(str(record["Speed"]))
+            self.tabWidgetAPDetails.setCurrentIndex(0)
             self.tabWidgetAPDetails.setVisible(True)
