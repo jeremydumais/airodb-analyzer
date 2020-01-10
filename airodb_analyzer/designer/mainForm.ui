@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>airodb-analyzer</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_3">
     <item row="0" column="0">
@@ -376,7 +379,7 @@
              <x>0</x>
              <y>0</y>
              <width>478</width>
-             <height>439</height>
+             <height>431</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
@@ -414,6 +417,7 @@
      <string>&amp;File</string>
     </property>
     <addaction name="action_Open_session"/>
+    <addaction name="actionClose_session"/>
     <addaction name="action_Quit"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
@@ -422,7 +426,23 @@
     </property>
     <addaction name="actionAbout_airodb_analyzer"/>
    </widget>
+   <widget class="QMenu" name="menu_Manage">
+    <property name="title">
+     <string>&amp;Manage</string>
+    </property>
+    <addaction name="actionTrusted_access_points"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionShow_trusted_APs"/>
+    <addaction name="actionShow_untrusted_APs"/>
+    <addaction name="actionShow_hidden_APs"/>
+   </widget>
    <addaction name="menu_File"/>
+   <addaction name="menuView"/>
+   <addaction name="menu_Manage"/>
    <addaction name="menu_Help"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -438,13 +458,23 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
+     <item row="1" column="0">
       <widget class="QListView" name="listViewAP">
        <property name="editTriggers">
         <set>QAbstractItemView::NoEditTriggers</set>
        </property>
        <property name="resizeMode">
         <enum>QListView::Fixed</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLineEdit" name="lineEditFilterAPs">
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="placeholderText">
+        <string>Filter APs by name or MAC Address...</string>
        </property>
       </widget>
      </item>
@@ -461,6 +491,12 @@
    <property name="movable">
     <bool>false</bool>
    </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
    <property name="toolButtonStyle">
     <enum>Qt::ToolButtonIconOnly</enum>
    </property>
@@ -474,6 +510,9 @@
     <bool>false</bool>
    </attribute>
    <addaction name="action_Open_session_toolbar"/>
+   <addaction name="action_Close_session_toolbar"/>
+   <addaction name="separator"/>
+   <addaction name="actionActionManageKnownAccessPoints_toolbar"/>
   </widget>
   <action name="action_Quit">
    <property name="text">
@@ -481,6 +520,10 @@
    </property>
   </action>
   <action name="action_Open_session">
+   <property name="icon">
+    <iconset>
+     <normaloff>images/fileopen.png</normaloff>images/fileopen.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Open a session...</string>
    </property>
@@ -492,18 +535,91 @@
   </action>
   <action name="action_Open_session_toolbar">
    <property name="icon">
-    <iconset theme="fileopen">
-     <normaloff/>
-    </iconset>
+    <iconset>
+     <normaloff>images/fileopen.png</normaloff>images/fileopen.png</iconset>
    </property>
    <property name="text">
-    <string/>
+    <string>action_Open_session_toolbar</string>
    </property>
    <property name="toolTip">
     <string>Open a session</string>
    </property>
   </action>
+  <action name="action_Close_session_toolbar">
+   <property name="icon">
+    <iconset>
+     <normaloff>images/fileclose.png</normaloff>images/fileclose.png</iconset>
+   </property>
+   <property name="text">
+    <string>action_Close_session_toolbar</string>
+   </property>
+   <property name="toolTip">
+    <string>Close the session</string>
+   </property>
+  </action>
+  <action name="actionClose_session">
+   <property name="icon">
+    <iconset>
+     <normaloff>images/fileclose.png</normaloff>images/fileclose.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Close the session</string>
+   </property>
+  </action>
+  <action name="actionTrusted_access_points">
+   <property name="icon">
+    <iconset resource="uiResources.qrc">
+     <normaloff>images/trusted-ap.png</normaloff>images/trusted-ap.png</iconset>
+   </property>
+   <property name="text">
+    <string>Trusted access points...</string>
+   </property>
+  </action>
+  <action name="actionActionManageKnownAccessPoints_toolbar">
+   <property name="icon">
+    <iconset>
+     <normaloff>images/trusted-ap.png</normaloff>images/trusted-ap.png</iconset>
+   </property>
+   <property name="text">
+    <string>actionManageKnownAccessPoints_toolbar</string>
+   </property>
+  </action>
+  <action name="actionShow_trusted_APs">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show trusted APs</string>
+   </property>
+  </action>
+  <action name="actionShow_untrusted_APs">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show untrusted APs</string>
+   </property>
+  </action>
+  <action name="actionShow_hidden_APs">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show hidden APs</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="uiResources.qrc"/>
+ </resources>
  <connections/>
 </ui>

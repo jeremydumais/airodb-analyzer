@@ -19,15 +19,16 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.tabWidgetAPDetails.currentChanged.connect(self.APDetailsTabChanged)
         self.action_Quit.triggered.connect(self.menuQuitClick)
         self.action_Open_session.triggered.connect(self.menuOpenSessionClick)
+        self.actionClose_session.triggered.connect(self.menuCloseSessionClick)
         self.action_Open_session_toolbar.triggered.connect(self.menuOpenSessionClick)
+        self.action_Close_session_toolbar.triggered.connect(self.menuCloseSessionClick)
         self.actionAbout_airodb_analyzer.triggered.connect(self.menuAboutBoxClick)
         self.listViewAP.selectionModel().selectionChanged.connect(self.listViewAPCurrentChange)
-
         self.show()
 
     def showEvent(self, event):
+        QtCore.QTimer.singleShot(200, lambda: self.lineEditFilterAPs.setStyleSheet("#lineEditFilterAPs { color: lightGray; }"))
         pass
-        #self.menuOpenSessionClick()
 
     def menuQuitClick(self):
         self.close()
@@ -43,11 +44,20 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.apListModel.clear()
         self.apListMACAddress.clear()
         for ap in apList:
-            item = QtGui.QStandardItem(ap['name'])
+            apDisplayName = ap['name']
+            if (apDisplayName == ""):
+                apDisplayName = "<hidden>"
+            item = QtGui.QStandardItem(apDisplayName)
             self.apListModel.appendRow(item)
             self.apListMACAddress.append(ap["_id"])
         self.tabWidgetAPDetails.setVisible(False)
         
+    def closeSession(self):
+        self._sessionName = ""
+        self.apListModel.clear()
+        self.apListMACAddress = []
+        self.tabWidgetAPDetails.setVisible(False)
+
     def loadAPRawLogs(self, sessionName, apMACAddress):
         storage = DBStorage()
         logs = storage.getSessionAPRawLogs(sessionName, apMACAddress)
@@ -69,6 +79,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         result = formOpenSession.exec_()
         if (result == QtWidgets.QDialog.Accepted):
             self.loadSession(formOpenSession.selectedSession)
+
+    def menuCloseSessionClick(self):
+        self.closeSession()
 
     def APDetailsTabChanged(self):
         if (self.tabWidgetAPDetails.currentIndex() == 1):

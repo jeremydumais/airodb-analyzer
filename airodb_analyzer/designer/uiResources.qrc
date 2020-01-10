@@ -1,0 +1,8 @@
+<RCC>
+  <qresource>
+    <file>images/trusted-ap.png</file>
+    <file>images/document-export.png</file>
+    <file>images/fileopen.png</file>
+    <file>images/fileclose.png</file>
+  </qresource>
+</RCC>
