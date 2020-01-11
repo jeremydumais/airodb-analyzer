@@ -15,6 +15,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.apListModel = QtGui.QStandardItemModel(self.listViewAP)
         self.apListMACAddress = []
         self.listViewAP.setModel(self.apListModel)
+        self.action_Close_session_toolbar.setEnabled(False)
+        self.actionClose_session.setEnabled(False)
         #Signals
         self.tabWidgetAPDetails.currentChanged.connect(self.APDetailsTabChanged)
         self.action_Quit.triggered.connect(self.menuQuitClick)
@@ -24,7 +26,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.action_Close_session_toolbar.triggered.connect(self.menuCloseSessionClick)
         self.actionAbout_airodb_analyzer.triggered.connect(self.menuAboutBoxClick)
         self.listViewAP.selectionModel().selectionChanged.connect(self.listViewAPCurrentChange)
-        self.show()
+        self.showMaximized()
 
     def showEvent(self, event):
         QtCore.QTimer.singleShot(200, lambda: self.lineEditFilterAPs.setStyleSheet("#lineEditFilterAPs { color: lightGray; }"))
@@ -51,12 +53,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             self.apListModel.appendRow(item)
             self.apListMACAddress.append(ap["_id"])
         self.tabWidgetAPDetails.setVisible(False)
-        
+        self.action_Close_session_toolbar.setEnabled(True)
+        self.actionClose_session.setEnabled(True)
+
     def closeSession(self):
         self._sessionName = ""
         self.apListModel.clear()
         self.apListMACAddress = []
         self.tabWidgetAPDetails.setVisible(False)
+        self.action_Close_session_toolbar.setEnabled(False)
+        self.actionClose_session.setEnabled(False)
+
 
     def loadAPRawLogs(self, sessionName, apMACAddress):
         storage = DBStorage()
