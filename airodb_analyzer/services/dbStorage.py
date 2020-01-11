@@ -1,6 +1,8 @@
 import pymongo
 import sys
 from pymongo import MongoClient
+from airodb_analyzer.models.accessPoint import AccessPoint
+from airodb_analyzer.models.macAddress import MACAddress
 
 class DBStorage():
     def __init__(self, mongoClient=None):
@@ -26,7 +28,11 @@ class DBStorage():
         return self.dumps.aggregate([{"$match":{}}, {"$group": { "_id":"$SessionName", "first": { "$first": "$FirstTimeSeen"}, "last": { "$last": "$LastTimeSeen"}, "count": { "$sum": 1}}}])
 
     def getSessionAP(self, sessionName):
-      return self.dumps.aggregate([{"$match":{"SessionName":sessionName}}, {"$group": { "_id":"$BSSID", "name": { "$last": "$ESSID" }}}])
+      retVal = []
+      apList = self.dumps.aggregate([{"$match":{"SessionName":sessionName}}, {"$group": { "_id":"$BSSID", "name": { "$last": "$ESSID" }}}])
+      for ap in apList:
+        retVal.append(AccessPoint(MACAddress(ap["_id"]), ap["name"]))
+      return retVal
 
     def getSessionAPStats(self, sessionName, apMACAddress):
       return self.dumps.aggregate([{"$match":{"SessionName":sessionName, "BSSID":apMACAddress}}, {

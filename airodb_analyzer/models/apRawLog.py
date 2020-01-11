@@ -1,0 +1,2 @@
+class APRawLog():
+    pass
