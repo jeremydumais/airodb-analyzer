@@ -1,8 +1,9 @@
 import unittest
 from os import path
 import sys
-from airodb_analyzer.models.accessPoint import AccessPoint
-from airodb_analyzer.models.macAddress import MACAddress
+sys.path.append(path.join(path.dirname(path.dirname(path.abspath(__file__))), 'airodb_analyzer'))
+from models.accessPoint import AccessPoint
+from models.macAddress import MACAddress
 
 class TestAccessPointMethods(unittest.TestCase):
     def test_constructor_TestWithNoneMacAddress_ThrowTypeError(self):

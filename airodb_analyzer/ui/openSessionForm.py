@@ -22,8 +22,7 @@ class Ui_OpenSessionForm(QtWidgets.QDialog):
     def buttonOKClick(self):
         index = self.tableView.selectionModel().selectedRows()
         if (len(index) > 0):
-            row = index[0].row()
-            self.selectedSession = self.tabledata[row][0]
+            self.selectedSession = index[0].data()
             self.accept()
 
     def buttonCancelClick(self):
@@ -31,12 +30,15 @@ class Ui_OpenSessionForm(QtWidgets.QDialog):
 
     def loadSessions(self):
         storage = DBStorage()
-        temp = storage.getSessionList()
-        self.tabledata = []
-        for item in temp:
-            self.tabledata.append([item["_id"], item["first"], item["last"], item["count"]])
+        sessions = storage.getSessionList()  
+        listContent = []     
+        for session in sessions:
+            listContent.append([session.getName(), 
+                str(session.getFirstEntryDateTime()),
+                str(session.getLastEntryDateTime()),
+                session.getNBOfRawLogs()])
         header = ['Session Name', 'First entry', 'Last entry', 'Number of entries']
-        tm = SessionModel(self.tabledata, header, self.tableView) 
+        tm = SessionModel(listContent, header, self.tableView) 
         self.tableView.setModel(tm)
         self.tableView.setSortingEnabled(True)
 

@@ -46,12 +46,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.apListModel.clear()
         self.apListMACAddress.clear()
         for ap in apList:
-            apDisplayName = ap['name']
+            apDisplayName = ap.getName()
             if (apDisplayName == ""):
                 apDisplayName = "<hidden>"
             item = QtGui.QStandardItem(apDisplayName)
             self.apListModel.appendRow(item)
-            self.apListMACAddress.append(ap["_id"])
+            self.apListMACAddress.append(ap.getMACAddress())
         self.tabWidgetAPDetails.setVisible(False)
         self.action_Close_session_toolbar.setEnabled(True)
         self.actionClose_session.setEnabled(True)
@@ -94,25 +94,25 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         if (self.tabWidgetAPDetails.currentIndex() == 1):
             apMACAddress = self.getSelectedAPMACAddress()
             if (apMACAddress != None):
-                self.loadAPRawLogs(self._sessionName, apMACAddress)
+                self.loadAPRawLogs(self._sessionName, apMACAddress.getValue())
 
     def listViewAPCurrentChange(self):
         apMACAddress = self.getSelectedAPMACAddress()
         if (apMACAddress != None):
             storage = DBStorage()
-            apStats = storage.getSessionAPStats(self._sessionName, apMACAddress)
+            apStats = storage.getSessionAPStats(self._sessionName, apMACAddress.getValue())
             record = apStats.next()
-            isProtected = (record["Encryption"] != "OPN")
+            isProtected = (record["encryption"] != "OPN")
             self.labelName.setText(record["name"])
-            self.labelMACAddress.setText(apMACAddress)
-            self.labelFirstTimeSeen.setText(record["FirstTimeSeen"])
-            self.labelLastTimeSeen.setText(record["LastTimeSeen"])
+            self.labelMACAddress.setText(apMACAddress.getValue())
+            self.labelFirstTimeSeen.setText(record["firstTimeSeen"])
+            self.labelLastTimeSeen.setText(record["lastTimeSeen"])
             self.widgetProtectionDetails.setVisible(isProtected)
             self.labelIsProtected.setText("True" if isProtected else "False")
-            self.labelEncryption.setText(record["Encryption"])
-            self.labelCipher.setText(record["Cipher"])
-            self.labelAuthentification.setText(record["Authentification"])
-            self.labelChannel.setText(str(record["Channel"]))
-            self.labelSpeed.setText(str(record["Speed"]))
+            self.labelEncryption.setText(record["encryption"])
+            self.labelCipher.setText(record["cipher"])
+            self.labelAuthentification.setText(record["authentification"])
+            self.labelChannel.setText(str(record["channel"]))
+            self.labelSpeed.setText(str(record["speed"]))
             self.tabWidgetAPDetails.setCurrentIndex(0)
             self.tabWidgetAPDetails.setVisible(True)

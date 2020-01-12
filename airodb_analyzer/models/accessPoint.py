@@ -1,4 +1,4 @@
-from airodb_analyzer.models.macAddress import MACAddress
+from models.macAddress import MACAddress
 
 class AccessPoint():
     _macAddress = None
@@ -35,4 +35,4 @@ class AccessPoint():
         return False
 
     def __hash__(self):
-        return hash((self._value))
+        return hash((self._macAddress, self._name))
