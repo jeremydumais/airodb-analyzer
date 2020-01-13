@@ -103,7 +103,195 @@ class TestSessionAPStatMethods(unittest.TestCase):
             "cipher": "CCMP",
             "authentification": "PSK"})
 
+    def test_createFromDict_TestWithNoChannel_ReturnValid(self):
+        session = SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK"})
+        self.assertEqual(0, session.getChannel())
 
+    def test_createFromDict_TestWithChannel6_ReturnValid(self):
+        session = SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": 6})
+        self.assertEqual(6, session.getChannel())
+
+    def test_createFromDict_TestWithChannelNotInt_ReturnValid(self):
+        with self.assertRaises(ValueError):
+            SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": "Test"})    
+
+    def test_createFromDict_TestWithNoSpeed_ReturnValid(self):
+        session = SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": "6"})
+        self.assertEqual(0, session.getSpeed())
+
+    def test_createFromDict_TestWithSpeed54_ReturnValid(self):
+        session = SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": 6,
+            "speed": 54})
+        self.assertEqual(54, session.getSpeed())
+    
+    def test_createFromDict_TestWithSpeedNotInt_ReturnValid(self):
+        with self.assertRaises(ValueError):
+            SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": "6",
+            "speed": "test"})    
+
+    def test_createFromDict_TestWithNoPowerLevelMin_ReturnValid(self):
+        session = SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": "6",
+            "speed": "54"})
+        self.assertEqual(0, session.getPowerLevelMin())
+
+    def test_createFromDict_TestWithPowerLevelMinMinus28_ReturnValid(self):
+        session = SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": 6,
+            "speed": 54,
+            "powerMin": -28})
+        self.assertEqual(-28, session.getPowerLevelMin())
+    
+    def test_createFromDict_TestWithPowerLevelMinNotInt_ReturnValid(self):
+        with self.assertRaises(ValueError):
+            SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": "6",
+            "speed": "test",
+            "powerMin": "Test"})   
+
+    def test_createFromDict_TestWithNoPowerLevelMax_ReturnValid(self):
+        session = SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": "6",
+            "speed": "54",
+            "powerMin": -24 })
+        self.assertEqual(0, session.getPowerLevelMax())
+
+    def test_createFromDict_TestWithPowerLevelMaxMinus28_ReturnValid(self):
+        session = SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": 6,
+            "speed": 54,
+            "powerMin": -24,
+            "powerMax": -28 })
+        self.assertEqual(-28, session.getPowerLevelMax())
+    
+    def test_createFromDict_TestWithPowerLevelMaxNotInt_ReturnValid(self):
+        with self.assertRaises(ValueError):
+            SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": "6",
+            "speed": "test",
+            "powerMin": -24,
+            "powerMax": "Test" })   
+
+    def test_createFromDict_TestWithNoPowerLevelAvg_ReturnValid(self):
+        session = SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": "6",
+            "speed": "54",
+            "powerMin": -24,
+            "powerMax": -32 })
+        self.assertEqual(0, session.getPowerLevelAvg())
+
+    def test_createFromDict_TestWithPowerLevelAvgMinus28_ReturnValid(self):
+        session = SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": 6,
+            "speed": 54,
+            "powerMin": -24,
+            "powerMax": -32,
+            "powerAvg": -28 })
+        self.assertEqual(-28, session.getPowerLevelAvg())
+    
+    def test_createFromDict_TestWithPowerLevelAvgNotInt_ReturnValid(self):
+        with self.assertRaises(ValueError):
+            SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": "6",
+            "speed": "test",
+            "powerMin": -24,
+            "powerMax": -32,
+            "powerAvg": "Test"})   
 
     def test_getName_ReturnTest(self):
         session = SessionAPStat.createFromDict({"name" : "Test",
@@ -157,3 +345,62 @@ class TestSessionAPStatMethods(unittest.TestCase):
             "cipher": "CCMP",
             "authentification": "PSK"})
         self.assertEqual("PSK", session.getAuthentification())
+
+    def test_getChannel_Return6(self):
+        session = SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "2020-01-03 15:24:54",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": "6"})
+        self.assertEqual(6, session.getChannel())
+
+    def test_getSpeed_Return54(self):
+        session = SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "2020-01-03 15:24:54",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": "6",
+            "speed": "54"})
+        self.assertEqual(54, session.getSpeed())
+
+    def test_isProtected_TestWithEmptyEncryption_ReturnFalse(self):
+        session = SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "2020-01-03 15:24:54",
+            "encryption": "",
+            "cipher": "",
+            "authentification": "",
+            "channel": "6",
+            "speed": "54"})
+        self.assertFalse(session.isProtected())
+
+    def test_isProtected_TestWithOPNEncryption_ReturnFalse(self):
+        session = SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "2020-01-03 15:24:54",
+            "encryption": "OPN",
+            "cipher": "",
+            "authentification": "",
+            "channel": "6",
+            "speed": "54"})
+        self.assertFalse(session.isProtected())  
+    
+    def test_isProtected_TestWithWPA2Encryption_ReturnTrue(self):
+        session = SessionAPStat.createFromDict({"name" : "test",
+            "_id" : "44:70:02:63:0E:81",
+            "firstTimeSeen": "2020-01-02 13:24:54",
+            "lastTimeSeen": "2020-01-03 15:24:54",
+            "encryption": "WPA2",
+            "cipher": "CCMP",
+            "authentification": "PSK",
+            "channel": "6",
+            "speed": "54"})
+        self.assertTrue(session.isProtected())

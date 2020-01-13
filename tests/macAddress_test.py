@@ -31,6 +31,10 @@ class TestMACAddressMethods(unittest.TestCase):
         with self.assertRaises(ValueError):
             MACAddress(":::::")
 
+    def test_constructor_TestWithEmptyTooLongMACAddressValue_ThrowValueError(self):
+        with self.assertRaises(ValueError):
+            MACAddress("::::::")
+
     def test_getValue_TestWith12AA56BB89FF_Return12AA56BB89FF(self):
             expected = "12:AA:56:BB:89:FF"
             macAddr = MACAddress(expected)
@@ -86,5 +90,27 @@ class TestMACAddressMethods(unittest.TestCase):
     def test_equalityOperator_TestWithDifferentValues_ReturnFalse(self):
         macAddr1 = MACAddress("12:aa:56:bb:89:FE")
         macAddr2 = MACAddress("12:aa:56:bb:89:FF")
-        self.assertNotEqual(macAddr1, macAddr2)
-        
+        self.assertFalse(macAddr1 == macAddr2)
+
+    def test_equalityOperator_TestWithAnotherType_ReturnFalse(self):
+        self.assertNotEqual(MACAddress("12:aa:56:bb:89:FE"), 3)
+    
+    def test_inequalityOperator_TestWithDifferentValues_ReturnTrue(self):
+        macAddr1 = MACAddress("12:aa:56:bb:89:FE")
+        macAddr2 = MACAddress("12:aa:56:bb:89:FF")
+        self.assertTrue(macAddr1 != macAddr2)
+
+    def test_inequalityOperator_TestWithIdenticalValues_ReturnFalse(self):
+        macAddr1 = MACAddress("12:aa:56:bb:89:FF")
+        macAddr2 = MACAddress("12:aa:56:bb:89:FF")
+        self.assertFalse(macAddr1 != macAddr2)
+
+    def test_hashOperator_TestWithDifferentValues_ReturnDifferentHash(self):
+        macAddr1 = MACAddress("12:aa:56:bb:89:FE")
+        macAddr2 = MACAddress("12:aa:56:bb:89:FF")
+        self.assertNotEqual(hash(macAddr1), hash(macAddr2))       
+
+    def test_hashOperator_TestWithIdenticalValues_ReturnSameHash(self):
+        macAddr1 = MACAddress("12:aa:56:bb:89:FF")
+        macAddr2 = MACAddress("12:aa:56:bb:89:FF")
+        self.assertEqual(hash(macAddr1), hash(macAddr2))    

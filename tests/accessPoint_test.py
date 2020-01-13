@@ -84,5 +84,40 @@ class TestAccessPointMethods(unittest.TestCase):
         ap2 = AccessPoint(MACAddress("12:34:56:78:89:FF"), "MyAP")
         self.assertNotEqual(ap1, ap2)
 
+    def test_equalityOperator_TestWithAnotherType_ReturnFalse(self):
+        self.assertNotEqual(AccessPoint(MACAddress("12:34:56:78:89:FE"), "MyAP1"), 3)
 
+    def test_isHidden_TestWithEmptyName_ReturnTrue(self):
+        ap = AccessPoint(MACAddress("12:34:56:78:89:FE"), "")
+        self.assertTrue(ap.isHidden())
 
+    def test_isHidden_TestWithOneX00Name_ReturnTrue(self):
+        ap = AccessPoint(MACAddress("12:34:56:78:89:FE"), "\\x00")
+        self.assertTrue(ap.isHidden())
+
+    def test_isHidden_TestWithTwoX00Name_ReturnTrue(self):
+        ap = AccessPoint(MACAddress("12:34:56:78:89:FE"), "\\x00\\x00")
+        self.assertTrue(ap.isHidden())
+
+    def test_isHidden_TestWithThreeX00Name_ReturnTrue(self):
+        ap = AccessPoint(MACAddress("12:34:56:78:89:FE"), "\\x00\\x00\\x00")
+        self.assertTrue(ap.isHidden())
+
+    def test_isHidden_TestWithValidName_ReturnFalse(self):
+        ap = AccessPoint(MACAddress("12:34:56:78:89:FE"), "Home")
+        self.assertFalse(ap.isHidden())
+
+    def test_hashOperator_TestWithDifferentMAC_ReturnDifferentHash(self):
+        ap1 = AccessPoint(MACAddress("12:34:56:78:89:FE"), "Home")
+        ap2 = AccessPoint(MACAddress("12:34:56:78:89:FF"), "Home")
+        self.assertNotEqual(hash(ap1), hash(ap2))       
+    
+    def test_hashOperator_TestWithDifferentName_ReturnDifferentHash(self):
+        ap1 = AccessPoint(MACAddress("12:34:56:78:89:FE"), "Home")
+        ap2 = AccessPoint(MACAddress("12:34:56:78:89:FF"), "Home1")
+        self.assertNotEqual(hash(ap1), hash(ap2))   
+
+    def test_hashOperator_TestWithIdenticalValues_ReturnSameHash(self):
+        ap1 = AccessPoint(MACAddress("12:34:56:78:89:FE"), "Home")
+        ap2 = AccessPoint(MACAddress("12:34:56:78:89:FE"), "Home")
+        self.assertEqual(hash(ap1), hash(ap2))   

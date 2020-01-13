@@ -22,11 +22,11 @@ class TestSessionMethods(unittest.TestCase):
         with self.assertRaises(ValueError):
             Session("   ")
 
-    def test_constructor_TestWithValidName_ReturnValid(self):
+    def test_constructor_TestWithValidNameCase1_ReturnValid(self):
         session = Session("MySession")
         self.assertEqual("MySession", session.getName())
 
-    def test_constructor_TestWithValidName_ReturnValid(self):
+    def test_constructor_TestWithValidNameCase2_ReturnValid(self):
         session = Session("MySession1")
         self.assertEqual("MySession1", session.getName())
 
@@ -78,6 +78,12 @@ class TestSessionMethods(unittest.TestCase):
         with self.assertRaises(ValueError):
             session.setName("   ")
 
+    def test_setName_TestWithValidName_ReturnValid(self):
+        session = Session("MySession")
+        expected = "MyRenamedSession"
+        session.setName(expected)
+        self.assertEqual(expected, session.getName())
+
     def test_setFirstEntryDateTime_TestWithInt_ThrowTypeError(self):
         session = Session("test", datetime(2020,1,1,12,0,0))
         with self.assertRaises(TypeError):
@@ -122,3 +128,57 @@ class TestSessionMethods(unittest.TestCase):
         session = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
         session.setNBOfRawLogs(7)
         self.assertEqual(7, session.getNBOfRawLogs())
+
+    def test_equalityOperator_TestWithIdenticalValues_ReturnTrue(self):
+        session1 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
+        session2 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
+        self.assertEqual(session1, session2)
+
+    def test_equalityOperator_TestWithDifferentName_ReturnFalse(self):
+        session1 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
+        session2 = Session("test1", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
+        self.assertNotEqual(session1, session2)
+
+    def test_equalityOperator_TestWithDifferentFirstEntryDateTime_ReturnFalse(self):
+        session1 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
+        session2 = Session("test", datetime(2020,1,1,12,0,1), datetime(2020,1,3,12,0,0), 9)
+        self.assertNotEqual(session1, session2)
+
+    def test_equalityOperator_TestWithDifferentLastEntryDateTime_ReturnFalse(self):
+        session1 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
+        session2 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,1), 9)
+        self.assertNotEqual(session1, session2)    
+
+    def test_equalityOperator_TestWithDifferentNBOfRawLogs_ReturnFalse(self):
+        session1 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
+        session2 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 8)
+        self.assertNotEqual(session1, session2)   
+
+    def test_equalityOperator_TestWithAnotherType_ReturnFalse(self):
+        session = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
+        self.assertNotEqual(session, 3)   
+
+    def test_hashOperator_TestWithDifferentName_ReturnDifferentHash(self):
+        session1 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
+        session2 = Session("test1", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
+        self.assertNotEqual(hash(session1), hash(session2))   
+
+    def test_hashOperator_TestWithDifferentFirstEntryDateTime_ReturnDifferentHash(self):
+        session1 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
+        session2 = Session("test", datetime(2020,1,1,12,0,1), datetime(2020,1,3,12,0,0), 9)
+        self.assertNotEqual(hash(session1), hash(session2))   
+
+    def test_hashOperator_TestWithDifferentLastEntryDateTime_ReturnDifferentHash(self):
+        session1 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
+        session2 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,1), 9)
+        self.assertNotEqual(hash(session1), hash(session2))  
+
+    def test_hashOperator_TestWithDifferentNBOfRawLogs_ReturnDifferentHash(self):
+        session1 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
+        session2 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 8)
+        self.assertNotEqual(hash(session1), hash(session2))  
+
+    def test_hashOperator_TestWithIdenticalValues_ReturnSameHash(self):
+        session1 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
+        session2 = Session("test", datetime(2020,1,1,12,0,0), datetime(2020,1,3,12,0,0), 9)
+        self.assertEqual(hash(session1), hash(session2))   

@@ -12,6 +12,7 @@ if __name__ == '__main__':
     os.environ['QT_API'] = 'pyqt5'
 
     app = QtWidgets.QApplication(sys.argv)
+    app.setWindowIcon(QtGui.QIcon("airodb_analyzer/designer/images/airodb-analyzer-logo-48.png"))
     mainForm = Ui_MainWindow()
     # setup stylesheet
     app.setStyleSheet(qdarkgraystyle.load_stylesheet())

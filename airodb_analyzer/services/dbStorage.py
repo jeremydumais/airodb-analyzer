@@ -4,6 +4,7 @@ from pymongo import MongoClient
 from models.accessPoint import AccessPoint
 from models.macAddress import MACAddress
 from models.session import Session
+from models.sessionAPStat import SessionAPStat
 from datetime import datetime
 from dateutil.parser import parse
 
@@ -53,7 +54,8 @@ class DBStorage():
       return retVal
 
     def getSessionAPStats(self, sessionName, apMACAddress):
-      return self.dumps.aggregate([{"$match":{"SessionName":sessionName, "BSSID":apMACAddress}}, {
+      retVal = None
+      stat = list(self.dumps.aggregate([{"$match":{"SessionName":sessionName, "BSSID":apMACAddress.getValue()}}, {
         "$group": { "_id":"$BSSID", 
         "name": { "$last": "$ESSID" }, 
         "firstTimeSeen": { "$first": "$FirstTimeSeen"}, 
@@ -62,8 +64,15 @@ class DBStorage():
         "cipher": { "$last": "$Cipher"},
         "authentification": { "$last": "$Authentification"},
         "channel": { "$last": "$Channel"},
-        "speed": { "$last": "$Speed"}
-        }}])
+        "speed": { "$last": "$Speed"},
+        "powerMin": { "$min": "$Power"},
+        "powerMax": { "$max": "$Power"},
+        "powerAvg": { "$avg": "$Power"}
+        }}]))
+      assert(len(stat) == 0 or len(stat) == 1)
+      if (len(stat) == 1):
+        retVal = SessionAPStat.createFromDict(stat[0])
+      return retVal
 
     def getSessionAPRawLogs(self, sessionName, apMACAddress):
       return self.dumps.find({"SessionName":sessionName, "BSSID":apMACAddress})

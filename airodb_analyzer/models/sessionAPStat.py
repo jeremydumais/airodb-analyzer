@@ -41,7 +41,31 @@ class SessionAPStat():
             self._cipher = value["cipher"]
         if ("authentification" in value and value["authentification"].strip() != ""):
             self._authentification = value["authentification"]
-
+        if ("channel" in value):
+            if (self._isInt(value["channel"])):
+                self._channel = int(value["channel"])
+            else:
+                raise ValueError("value")
+        if ("speed" in value):
+            if (self._isInt(value["speed"])):
+                self._speed = int(value["speed"])
+            else:
+                raise ValueError("value")
+        if ("powerMin" in value):
+            if (self._isInt(value["powerMin"])):
+                self._powerLevelMin = int(value["powerMin"])
+            else:
+                raise ValueError("value")
+        if ("powerMax" in value):
+            if (self._isInt(value["powerMax"])):
+                self._powerLevelMax = int(value["powerMax"])
+            else:
+                raise ValueError("value")
+        if ("powerAvg" in value):
+            if (self._isInt(value["powerAvg"])):
+                self._powerLevelAvg = int(value["powerAvg"])
+            else:
+                raise ValueError("value")
           
     def getName(self):
         return self._name
@@ -63,3 +87,28 @@ class SessionAPStat():
     
     def getAuthentification(self):
         return self._authentification
+
+    def getChannel(self):
+        return self._channel
+
+    def getSpeed(self):
+        return self._speed
+
+    def getPowerLevelMin(self):
+        return self._powerLevelMin
+
+    def getPowerLevelMax(self):
+        return self._powerLevelMax
+
+    def getPowerLevelAvg(self):
+        return self._powerLevelAvg
+
+    def isProtected(self):
+        return self._encryption != "" and self._encryption != "OPN"
+
+    def _isInt(self, value):
+        try:
+            int(value)
+            return True
+        except ValueError:
+            return False
