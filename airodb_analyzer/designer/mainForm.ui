@@ -495,15 +495,15 @@
     <property name="title">
      <string>&amp;Manage</string>
     </property>
-    <addaction name="actionTrusted_access_points"/>
+    <addaction name="action_Manage_Trusted_access_points"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
      <string>&amp;View</string>
     </property>
-    <addaction name="actionShow_trusted_APs"/>
-    <addaction name="actionShow_untrusted_APs"/>
-    <addaction name="actionShow_hidden_APs"/>
+    <addaction name="action_Show_trusted_APs"/>
+    <addaction name="action_Show_untrusted_APs"/>
+    <addaction name="action_Show_hidden_APs"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menuView"/>
@@ -577,7 +577,7 @@
    <addaction name="action_Open_session_toolbar"/>
    <addaction name="action_Close_session_toolbar"/>
    <addaction name="separator"/>
-   <addaction name="actionActionManageKnownAccessPoints_toolbar"/>
+   <addaction name="action_ManageKnownAccessPoints_toolbar"/>
   </widget>
   <action name="action_Quit">
    <property name="text">
@@ -631,7 +631,7 @@
     <string>&amp;Close the session</string>
    </property>
   </action>
-  <action name="actionTrusted_access_points">
+  <action name="action_Manage_Trusted_access_points">
    <property name="icon">
     <iconset>
      <normaloff>images/trusted-ap.png</normaloff>images/trusted-ap.png</iconset>
@@ -640,16 +640,16 @@
     <string>Trusted access points...</string>
    </property>
   </action>
-  <action name="actionActionManageKnownAccessPoints_toolbar">
+  <action name="action_ManageKnownAccessPoints_toolbar">
    <property name="icon">
     <iconset>
      <normaloff>images/trusted-ap.png</normaloff>images/trusted-ap.png</iconset>
    </property>
    <property name="text">
-    <string>actionManageKnownAccessPoints_toolbar</string>
+    <string>Manage &amp;Trusted APs</string>
    </property>
   </action>
-  <action name="actionShow_trusted_APs">
+  <action name="action_Show_trusted_APs">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -660,7 +660,7 @@
     <string>Show trusted APs</string>
    </property>
   </action>
-  <action name="actionShow_untrusted_APs">
+  <action name="action_Show_untrusted_APs">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -671,7 +671,7 @@
     <string>Show untrusted APs</string>
    </property>
   </action>
-  <action name="actionShow_hidden_APs">
+  <action name="action_Show_hidden_APs">
    <property name="checkable">
     <bool>true</bool>
    </property>

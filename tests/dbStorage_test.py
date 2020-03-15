@@ -206,3 +206,127 @@ class TestDBStorageMethods_FourDumpEntriesFixture(unittest.TestCase):
         dbStorage = DBStorage(self.mockClient)
         apStat = dbStorage.getSessionAPStats("MySession44", MACAddress("64:70:02:63:0E:86"))
         self.assertIsNone(apStat)
+
+class TestDBStorageMethods_OneTrustedAPEntryFixture(unittest.TestCase):
+    def setUp(self):
+        self.mockClient = MongoClient()
+        entries = [{
+            "BSSID" : "64:70:02:63:0E:86"
+        }]
+        self.mockClient.airodb.airodb_trustedAP.insert_many(entries)
+
+    def tearDown(self):
+        self.mockClient.close()
+
+    def test_getTrustedAPList_Return1AP(self):
+        dbStorage = DBStorage(self.mockClient)
+        expected = MACAddress("64:70:02:63:0E:86")
+        trustedAPs = dbStorage.getTrustedAPList()
+        self.assertEqual(1, len(trustedAPs))
+        self.assertEqual(expected, trustedAPs[0])
+
+    def test_insertTrustedAP_TestWithValidNonExistingMAC_ReturnSuccess(self):
+        dbStorage = DBStorage(self.mockClient)
+        dbStorage.insertTrustedAP(MACAddress("64:70:02:63:0E:87"))
+        trustedAPs = dbStorage.getTrustedAPList()
+        self.assertEqual(2, len(trustedAPs))
+        self.assertEqual(MACAddress("64:70:02:63:0E:87"), trustedAPs[1])
+
+    def test_insertTrustedAP_TestWithValidExistingMAC_ThrowRuntimeError(self):
+        dbStorage = DBStorage(self.mockClient)
+        with self.assertRaises(RuntimeError):
+            dbStorage.insertTrustedAP(MACAddress("64:70:02:63:0E:86"))
+
+    def test_insertTrustedAP_TestWithNoneMAC_ThrowTypeError(self):
+        dbStorage = DBStorage(self.mockClient)
+        with self.assertRaises(TypeError):
+            dbStorage.insertTrustedAP(None)
+
+    def test_insertTrustedAP_TestWithStringMAC_ThrowTypeError(self):
+        dbStorage = DBStorage(self.mockClient)
+        with self.assertRaises(TypeError):
+            dbStorage.insertTrustedAP("2345")
+
+    def test_isTrustedAPExist_TestWithNoneMACAddress_ThrowTypeError(self):
+        dbStorage = DBStorage(self.mockClient)
+        with self.assertRaises(TypeError):
+            dbStorage.isTrustedAPExist(None)
+
+    def test_isTrustedAPExist_TestWithStringMACAddress_ThrowTypeError(self):
+        dbStorage = DBStorage(self.mockClient)
+        with self.assertRaises(TypeError):
+            dbStorage.isTrustedAPExist("64:70:02:63:0E:86")
+
+    def test_isTrustedAPExist_TestWithExistantMACAddress_ReturnTrue(self):
+        dbStorage = DBStorage(self.mockClient)
+        self.assertTrue(dbStorage.isTrustedAPExist(MACAddress("64:70:02:63:0E:86")))
+    
+    def test_isTrustedAPExist_TestWithNonExistantMACAddress_ReturnFalse(self):
+        dbStorage = DBStorage(self.mockClient)
+        self.assertFalse(dbStorage.isTrustedAPExist(MACAddress("64:70:02:63:0E:85")))
+
+    def test_updateTrustedAP_TestWithExistantOldAndNonExistanNew_ReturnSucces(self):
+        dbStorage = DBStorage(self.mockClient)
+        dbStorage.updateTrustedAP(MACAddress("64:70:02:63:0E:86"), MACAddress("64:70:02:63:0E:87"))
+        trustedAPs = dbStorage.getTrustedAPList()
+        self.assertEqual(1, len(trustedAPs))
+        self.assertEqual(MACAddress("64:70:02:63:0E:87"), trustedAPs[0])
+
+    def test_updateTrustedAP_TestWithExistantOldAndSameNew_ReturnSucces(self):
+        dbStorage = DBStorage(self.mockClient)
+        dbStorage.updateTrustedAP(MACAddress("64:70:02:63:0E:86"), MACAddress("64:70:02:63:0E:86"))
+        trustedAPs = dbStorage.getTrustedAPList()
+        self.assertEqual(1, len(trustedAPs))
+        self.assertEqual(MACAddress("64:70:02:63:0E:86"), trustedAPs[0])
+
+    def test_updateTrustedAP_TestWithNonExistantOld_ThrowRuntimeError(self):
+        dbStorage = DBStorage(self.mockClient)
+        with self.assertRaises(RuntimeError):
+            dbStorage.updateTrustedAP(MACAddress("64:70:02:63:0E:87"), MACAddress("64:70:02:63:0E:86"))
+    
+    def test_updateTrustedAP_TestWithExistantNewAndNotTheOld_ThrowRuntimeError(self):
+        dbStorage = DBStorage(self.mockClient)
+        dbStorage.insertTrustedAP(MACAddress("64:70:02:63:0E:87"))
+        with self.assertRaises(RuntimeError):
+            dbStorage.updateTrustedAP(MACAddress("64:70:02:63:0E:87"), MACAddress("64:70:02:63:0E:86"))
+
+    def test_updateTrustedAP_TestWithNoneMACOld_ThrowTypeError(self):
+        dbStorage = DBStorage(self.mockClient)
+        with self.assertRaises(TypeError):
+            dbStorage.updateTrustedAP(None, MACAddress("64:70:02:63:0E:86"))
+   
+    def test_updateTrustedAP_TestWithStringMACOld_ThrowTypeError(self):
+        dbStorage = DBStorage(self.mockClient)
+        with self.assertRaises(TypeError):
+            dbStorage.updateTrustedAP("64:70:02:63:0E:86", MACAddress("64:70:02:63:0E:86"))
+
+    def test_updateTrustedAP_TestWithNoneMACNew_ThrowTypeError(self):
+        dbStorage = DBStorage(self.mockClient)
+        with self.assertRaises(TypeError):
+            dbStorage.updateTrustedAP(MACAddress("64:70:02:63:0E:86"), None)
+   
+    def test_updateTrustedAP_TestWithStringMACNew_ThrowTypeError(self):
+        dbStorage = DBStorage(self.mockClient)
+        with self.assertRaises(TypeError):
+            dbStorage.updateTrustedAP(MACAddress("64:70:02:63:0E:86"), "64:70:02:63:0E:86")
+
+    def test_deleteTrustedAP_TestWithExistingMAC_ReturnSuccess(self):
+        dbStorage = DBStorage(self.mockClient)
+        dbStorage.deleteTrustedAP(MACAddress("64:70:02:63:0E:86"))
+        trustedAPs = dbStorage.getTrustedAPList()
+        self.assertEqual(0, len(trustedAPs))
+
+    def test_deleteTrustedAP_TestWithNoneMAC_ThrowTypeError(self):
+        dbStorage = DBStorage(self.mockClient)
+        with self.assertRaises(TypeError):
+            dbStorage.deleteTrustedAP(None)
+
+    def test_deleteTrustedAP_TestWithStringMAC_ThrowTypeError(self):
+        dbStorage = DBStorage(self.mockClient)
+        with self.assertRaises(TypeError):
+            dbStorage.deleteTrustedAP("64:70:02:63:0E:86")
+
+    def test_deleteTrustedAP_TestWithNonExistantMAC_ThrowRuntimeError(self):
+        dbStorage = DBStorage(self.mockClient)
+        with self.assertRaises(RuntimeError):
+            dbStorage.deleteTrustedAP(MACAddress("64:70:02:63:0E:87"))

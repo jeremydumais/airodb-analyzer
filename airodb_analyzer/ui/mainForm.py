@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from ui.openSessionForm import Ui_OpenSessionForm
 from ui.aboutBoxForm import Ui_AboutBoxForm
+from ui.manageTrustedAPsForm import Ui_ManageTrustedAPsForm
 from services.dbStorage import DBStorage
 from bson.json_util import dumps
 
@@ -15,8 +16,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.apListModel = QtGui.QStandardItemModel(self.listViewAP)
         self.apListMACAddress = []
         self.listViewAP.setModel(self.apListModel)
-        self.action_Close_session_toolbar.setEnabled(False)
-        self.actionClose_session.setEnabled(False)
+        self.toggleControlsForSession(False)
         #Signals
         self.tabWidgetAPDetails.currentChanged.connect(self.APDetailsTabChanged)
         self.action_Quit.triggered.connect(self.menuQuitClick)
@@ -24,13 +24,15 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.actionClose_session.triggered.connect(self.menuCloseSessionClick)
         self.action_Open_session_toolbar.triggered.connect(self.menuOpenSessionClick)
         self.action_Close_session_toolbar.triggered.connect(self.menuCloseSessionClick)
+        self.action_Show_hidden_APs.triggered.connect(self.menuShowHiddenAPsClick)
+        self.action_Manage_Trusted_access_points.triggered.connect(self.menuManageTrustedAPsClick)
+        self.action_ManageKnownAccessPoints_toolbar.triggered.connect(self.menuManageTrustedAPsClick)
         self.actionAbout_airodb_analyzer.triggered.connect(self.menuAboutBoxClick)
         self.listViewAP.selectionModel().selectionChanged.connect(self.listViewAPCurrentChange)
         self.showMaximized()
 
     def showEvent(self, event):
         QtCore.QTimer.singleShot(200, lambda: self.lineEditFilterAPs.setStyleSheet("#lineEditFilterAPs { color: lightGray; }"))
-        pass
 
     def menuQuitClick(self):
         self.close()
@@ -47,23 +49,29 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.apListMACAddress.clear()
         for ap in apList:
             apDisplayName = ap.getName()
-            if (apDisplayName == ""):
+            if (ap.isHidden()):
                 apDisplayName = "<hidden>"
-            item = QtGui.QStandardItem(apDisplayName)
-            self.apListModel.appendRow(item)
-            self.apListMACAddress.append(ap.getMACAddress())
+            if (not(self.action_Show_hidden_APs.isChecked()) and ap.isHidden()):
+                pass
+            else:
+                item = QtGui.QStandardItem(apDisplayName)
+                self.apListModel.appendRow(item)
+                self.apListMACAddress.append(ap.getMACAddress())
         self.tabWidgetAPDetails.setVisible(False)
-        self.action_Close_session_toolbar.setEnabled(True)
-        self.actionClose_session.setEnabled(True)
+        self.toggleControlsForSession(True)
+
 
     def closeSession(self):
         self._sessionName = ""
         self.apListModel.clear()
         self.apListMACAddress = []
         self.tabWidgetAPDetails.setVisible(False)
-        self.action_Close_session_toolbar.setEnabled(False)
-        self.actionClose_session.setEnabled(False)
+        self.toggleControlsForSession(False)
 
+    def toggleControlsForSession(self, isSessionOpen):
+        self.action_Close_session_toolbar.setEnabled(isSessionOpen)
+        self.actionClose_session.setEnabled(isSessionOpen)
+        self.action_Show_hidden_APs.setEnabled(isSessionOpen)
 
     def loadAPRawLogs(self, sessionName, apMACAddress):
         storage = DBStorage()
@@ -118,3 +126,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 self.labelPowerAvg.setText(str(apStat.getPowerLevelAvg()))
                 self.tabWidgetAPDetails.setCurrentIndex(0)
                 self.tabWidgetAPDetails.setVisible(True)
+
+    def menuShowHiddenAPsClick(self):
+        self.loadSession(self._sessionName)
+
+    def menuManageTrustedAPsClick(self):
+        formManageTrustedAPs = Ui_ManageTrustedAPsForm()
+        formManageTrustedAPs.exec_()
