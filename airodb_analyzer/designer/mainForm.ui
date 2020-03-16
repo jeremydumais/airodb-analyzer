@@ -78,6 +78,20 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="buttonAddToTrustedAP">
+              <property name="text">
+               <string>Add to Trusted AP</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="buttonRemoveFromTrustedAP">
+              <property name="text">
+               <string>Remove from Trusted AP</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="horizontalSpacer_2">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -501,6 +515,7 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
+    <addaction name="action_Show_all_APs"/>
     <addaction name="action_Show_trusted_APs"/>
     <addaction name="action_Show_untrusted_APs"/>
     <addaction name="action_Show_hidden_APs"/>
@@ -680,6 +695,11 @@
    </property>
    <property name="text">
     <string>Show hidden APs</string>
+   </property>
+  </action>
+  <action name="action_Show_all_APs">
+   <property name="text">
+    <string>Show all</string>
    </property>
   </action>
  </widget>

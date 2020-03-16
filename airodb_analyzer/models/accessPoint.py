@@ -21,6 +21,9 @@ class AccessPoint():
     def isHidden(self):
         sanitizedName = self._name.strip().replace("\\x00", "")
         return True if sanitizedName=="" else False
+
+    def isTrusted(self, trustedAPList):
+        return self._macAddress in trustedAPList
     
     def setMACAddress(self, macAddress):
         if (not isinstance(macAddress, MACAddress)):
