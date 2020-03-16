@@ -19,6 +19,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.apListMACAddress = []
         self.listViewAP.setModel(self.apListModel)
         self.toggleControlsForSession(False)
+        self.lineEditFilterAPs.setVisible(False)
         #Signals
         self.tabWidgetAPDetails.currentChanged.connect(self.APDetailsTabChanged)
         self.action_Quit.triggered.connect(self.menuQuitClick)
